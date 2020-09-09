@@ -13,7 +13,7 @@ import (
 
 var (
 	// data contains the full contents from $PWD/Makefile
-	data    string
+	data string
 	// targets are the targets filtered down from the data in the makefile.
 	targets []string
 )
@@ -34,14 +34,14 @@ func init() {
 func process() {
 	// Check each line for a target.
 	for _, line := range strings.Split(data, "\n") {
-		// For the purpose of this tool, we're searching for explicitly declared
-		// PHONY targets, so we need to match a regex and filter out target prerequisites.
-		if check, _ := regexp.MatchString("^.PHONY: .*", line); check {
-			// This line matches our regex, so we need to filter it down for accuracy.
-			target := strings.TrimLeft(line, ".PHONY: ")
-			if !strings.HasPrefix(target, "$") {
-				// Add our target to the list of targets.
-				targets = append(targets, target)
+		if check, _ := regexp.MatchString("^([a-z]|[A-Z]|[0-9]:).*", line); check {
+			if !strings.ContainsAny(line, "?=+") {
+				// This line matches our requirements, so we need to filter it down for accuracy.
+				//target := strings.TrimLeft(line, ".PHONY: ")
+				target := strings.Split(line, ":")
+				if len(target) == 2 {
+					targets = append(targets, strings.Split(target[0], " ")[0])
+				}
 			}
 		}
 	}
