@@ -35,11 +35,10 @@ func process() {
 	// Check each line for a target.
 	for _, line := range strings.Split(data, "\n") {
 		if check, _ := regexp.MatchString("^([a-z]|[A-Z]|[0-9]:).*", line); check {
-			if !strings.ContainsAny(line, "?=+") {
+			if !strings.ContainsAny(line, "?+") && !strings.Contains(line, ":=") {
 				// This line matches our requirements, so we need to filter it down for accuracy.
-				//target := strings.TrimLeft(line, ".PHONY: ")
 				target := strings.Split(line, ":")
-				if len(target) == 2 {
+				if len(target) == 2 && !strings.HasSuffix(line, ":") {
 					targets = append(targets, strings.Split(target[0], " ")[0])
 				}
 			}
