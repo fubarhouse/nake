@@ -42,6 +42,13 @@ func process() {
 					targets = append(targets, strings.Split(target[0], " ")[0])
 				}
 			}
+		} else if check, _ := regexp.MatchString("^.PHONY: .*", line); check {
+			// This line matches our regex, so we need to filter it down for accuracy.
+			target := strings.TrimLeft(line, ".PHONY: ")
+			if !strings.HasPrefix(target, "$") {
+				// Add our target to the list of targets.
+				targets = append(targets, target)
+			}
 		}
 	}
 	// Sort the targets.
